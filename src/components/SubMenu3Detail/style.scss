@@ -1,0 +1,158 @@
+@font-face {
+  font-family: "Times New Roman";
+  src: url("../../font/font-times-new-roman.ttf") format("truetype");
+}
+
+.sub-menu-container {
+  margin-top: 32px;
+  background-color: #f8eded;
+  border: 1px solid #e88f8f;
+  border-radius: 20px;
+  font-size: 14px;
+  padding: 20px 20px;
+  min-width: 35%;
+
+  .sub-menu-content {
+    font-family: "Times New Roman", serif;
+    background-color: #fff;
+    padding: 32px;
+
+    &-header-title {
+      margin-top: 8px;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    &-header-infomation {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+      line-height: 16px;
+    }
+
+    &-title {
+      margin-top: 32px;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    &-main {
+      margin-top: 36px;
+
+      &-feature-item {
+        line-height: 20px;
+        display: flex;
+        justify-content: space-between;
+
+        &:last-child {
+          justify-content: flex-end;
+        }
+      }
+
+      &-feature-table {
+        margin-top: 12px;
+
+        .table-list-sub-menu {
+          margin-top: 8px;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .add-row-button {
+          margin-top: 4px;
+          text-align: center;
+
+          .add-row-icon {
+            cursor: pointer;
+            border: 2px solid #000;
+          }
+        }
+      }
+
+      &-note {
+        margin-top: 24px;
+      }
+
+      &-signature {
+        margin-top: 24px;
+        display: flex;
+        justify-content: space-around;
+
+        .to-truong,
+        .hieu-truong {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    }
+  }
+
+  #react-doc-viewer {
+    border: 1px solid;
+    border-radius: 20px;
+    max-height: 1000px;
+  }
+
+  .sub-menu-infomation {
+    background-color: #fff;
+    margin-top: 24px;
+    padding: 8px;
+    font-size: 16px;
+
+    .sub-menu-row {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+
+      .underline-blue {
+        color: rgb(0, 81, 255);
+        cursor: pointer;
+      }
+
+      .share-facebook {
+        background-color: rgb(0, 81, 255);
+        display: flex;
+        column-gap: 8px;
+        color: #fff;
+        padding: 2px 6px;
+        align-items: center;
+
+        image {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .sub-menu-action {
+    margin-top: 48px;
+
+    .verify {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #eae3e3;
+      padding: 12px;
+
+      .action-button {
+        background-color: #f5e8dd;
+        padding: 8px;
+      }
+    }
+  }
+
+  .sub-menu-note {
+    margin-top: 12px;
+
+    textarea {
+      width: 100%;
+    }
+  }
+}
+
+input {
+  border: 0;
+}

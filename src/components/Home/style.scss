@@ -1,0 +1,113 @@
+.home-panel {
+  &-content {
+    width: 100%;
+    background-color: #f5e8dd;
+    border-radius: 20px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    padding: 40px 0 32px 0px;
+
+    &-sub-menu {
+      border-bottom: 1px solid #000;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &-list {
+        padding: 0 32px 32px 32px;
+
+        .home-panel-content-sub-menu-item-name {
+          font-size: 18px;
+          display: flex;
+          justify-content: space-between !important;
+          font-weight: bold;
+
+          .add-row-button {
+            margin-top: 4px;
+            text-align: center;
+            display: flex;
+            column-gap: 10px;
+            align-items: center;
+            justify-content: center;
+
+            .add-row-icon {
+              cursor: pointer;
+              border: 2px solid #000;
+            }
+          }
+        }
+
+        .home-panel-content-sub-menu-item-content {
+          padding: 12px 8px;
+
+          .swiper-slide {
+            width: 30%;
+            height: 300px;
+
+            .sub-menu-content-detail {
+              width: 100%;
+              height: 90%;
+              background-color: #cd8d7a;
+              cursor: pointer;
+              position: relative;
+
+              .sub-menu-subject-name {
+                position: absolute;
+                text-align: center;
+                top: 270px;
+                font-size: 11px;
+                left: 50%;
+                transform: translateX(-55%);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.answer-title {
+  text-align: justify;
+}
+.sub-menu-content-detail {
+  position: relative;
+  width: 100%;
+  height: auto;
+  /* Đảm bảo chiều cao tự động dựa trên nội dung */
+}
+
+.image-container {
+  background-size: cover;
+  /* Hiển thị ảnh đầy đủ kích thước và cắt bớt phần dư thừa */
+  background-position: center;
+  /* Căn ảnh vào giữa */
+  width: 100%;
+  /* Đảm bảo ảnh đầy đủ chiều rộng của parent */
+  padding-top: 75%;
+  /* Tỷ lệ chiều cao của ảnh (VD: 4:3) */
+  position: relative;
+}
+
+/* Extra Small devices (phones, 576px and down) */
+@media (max-width: 576px) and (max-width: 768px) {
+  .text-header {
+    font-size: 16px;
+  }
+  .home-panel-content-sub-menu-item-name span {
+    font-size: 15px;
+  }
+}
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 992px) {
+  .text-header {
+    font-size: 20px;
+  }
+  .home-panel-content-sub-menu-item-name span {
+    font-size: 20px;
+  }
+}
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}

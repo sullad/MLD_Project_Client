@@ -1,0 +1,74 @@
+.scrom-type-panel {
+    &-content {
+        width: 100%;
+        background-color: #F5E8DD;
+        border-radius: 20px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+        padding: 40px 0 32px 0px;
+
+        &-sub-menu {
+            border-bottom: 1px solid #000;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &-list {
+                padding: 0 32px 32px 32px;
+
+                .scrom-type-panel-content-sub-menu-item-name {
+                    font-size: 25px;
+                    display: flex;
+                    justify-content: flex-end !important;
+
+                    .add-row-button {
+                        margin-top: 4px;
+                        text-align: center;
+                        display: flex;
+                        column-gap: 10px;
+                        align-items: center;
+                        justify-content: center;
+
+                        a {
+                            color: #000;
+                        }
+                    }
+                }
+
+                .grade-name {
+                    padding: 24px 0;
+                    font-size: 24px;
+                }
+
+                .scrom-type-panel-content-sub-menu-item-content-grid {
+                    padding: 12px 8px;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+
+                    .sub-menu-content-detail {
+                        width: 95%;
+                        height: 300px;
+                        background-color: #CD8D7A;
+                        cursor: pointer;
+                        position: relative;
+
+                        .remove-row-button {
+                            border-radius: 50%;
+                            border: 1px solid #000;
+                            width: 25px;
+                            height: 25px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            position: absolute;
+                            top: 12px;
+                            right: 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

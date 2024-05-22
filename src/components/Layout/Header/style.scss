@@ -1,0 +1,210 @@
+$header-height: 90px;
+
+.header {
+  height: $header-height;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: #f2f6fc;
+  transition: 0.05s ease-out;
+  margin-bottom: 100px;
+
+  > .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+
+    &.scroll,
+    .hide-header-action .scroll {
+      background-color: #d5e2f7;
+    }
+
+    .left-header {
+      display: flex;
+      align-items: center;
+
+      .logo-header img {
+        height: 55px;
+        width: auto;
+
+        @media (max-width: 768px) {
+          height: 55px;
+          margin-left: 24px;
+        }
+      }
+
+      .text-header {
+        color: #ec1f24;
+        font-weight: 700;
+        font-size: 20px;
+        margin-left: 70px;
+        animation: colorText 6s ease-in-out infinite;
+
+        @media (max-width: 768px) {
+          font-size: 25px;
+          margin-left: 32px;
+        }
+      }
+
+      @keyframes colorText {
+        0% {
+          color: #ec1f24;
+        }
+
+        75% {
+          color: orange;
+        }
+      }
+    }
+
+    .right-header {
+      display: flex;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+
+      .nav-list {
+        display: flex;
+        align-items: center;
+
+        .item-header {
+          padding: 0 15px;
+          cursor: pointer;
+
+          a {
+            font-weight: 700;
+            color: #1c3967;
+            font-size: 14px;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+
+          &:nth-child(2),
+          &:nth-child(4) {
+            position: relative;
+
+            a:hover {
+              color: #ec1f24;
+            }
+          }
+
+          .user-info {
+            position: relative;
+          }
+
+          .dropdown {
+            display: none;
+            position: absolute;
+            left: -50%;
+            width: 200px;
+            max-height: 350px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 5px;
+
+            li {
+              list-style-type: none;
+              padding: 8px 0;
+            }
+          }
+
+          &:hover .dropdown {
+            display: block;
+          }
+        }
+
+        .cart-header img {
+          height: 21px;
+          width: 26px;
+          color: #ec1f24;
+        }
+
+        .action-header {
+          display: inline-block;
+
+          button {
+            color: #1c3967;
+            font-weight: 500;
+            background: #f2f6fc;
+            font-size: 14px;
+            text-decoration: none;
+            border: 1px solid;
+            padding: 8px 12px;
+            margin: 4px;
+
+            &:hover {
+              cursor: pointer;
+              color: white;
+              background: #1c3967 !important;
+            }
+          }
+        }
+      }
+    }
+
+    .hide-header {
+      margin-right: 8px;
+
+      @media (min-width: 768px) {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+      }
+
+      .hide-header-button {
+        margin-right: 8px;
+      }
+
+      .hide-header-action button {
+        color: #1c3967;
+        font-weight: 500;
+        background: #f2f6fc;
+        font-size: 32px;
+        text-decoration: none;
+        border: 0px;
+        margin: 2px;
+        transition: background-color 2s ease;
+      }
+
+      .login-button {
+        border-right: 1px solid #ec1f24 !important;
+        padding-right: 8px;
+      }
+
+      .hide-header-action a {
+        color: #333;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .right-header {
+    display: none !important;
+  }
+
+  .hamburger-menu {
+    display: block !important;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .right-header {
+    display: flex !important;
+  }
+
+  .hamburger-menu {
+    display: none !important;
+  }
+}

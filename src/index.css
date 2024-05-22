@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.MuiTableCell-root {
+  padding: 8px !important;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  /* font-family: "SVN-Poppins", Arial, sans-serif; */
+}
+
+sub-menu-content {
+  font-family: "Times New Roman", serif !important;
+}
+
+body {
+  background: #f2f6fc;
+
+  .container {
+    margin: 0 auto;
+    padding: 0 15px;
+
+    @media (min-width: 769px) {
+      width: 750px;
+    }
+
+    @media (min-width: 992px) {
+      width: 970px;
+    }
+
+    @media (min-width: 1200px) {
+      width: 1270px;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+
+.button-mui {
+  background-color: #e2bfb3 !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background-color: #ffb38e !important;
+  }
+}

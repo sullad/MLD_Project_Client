@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="053d1a97-111d-47b1-8fea-59ecbc932be8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/mock/user/menu.mock.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/mock/user/menu.mock.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/account/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/account/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation/phuluc1.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation/phuluc1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation/style.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation2/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation2/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation3/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation3/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation4/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/doucumentation4/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/layout/notice.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/layout/notice.tsx" afterDir="false" />
+=======
+    <list default="true" id="be828d7c-dbf1-4b62-8bf4-1f83e0ab14e4" name="Changes" comment="fix dashboard, add components Phu luc">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/permission/role.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/permission/role.api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/request.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/request.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/user.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/api/user.api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/interface/user/login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/interface/user/login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/mock/user/menu.mock.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/mock/user/menu.mock.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/login/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/pages/login/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/routes/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientAdmin/admindashboard/src/routes/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/Project_MLD/Controllers/S3FileUploadController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/Project_MLD/Controllers/S3FileUploadController.cs" afterDir="false" />
+>>>>>>> main
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2fVNMJPmkVOcNgOvHMqF6kJamBz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+<<<<<<< HEAD
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "anhdhn",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/damhu/IdeaProjects",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "C:\\Users\\damhu\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-U\\ch-0\\233.14808.21\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+=======
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;anhdhn&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FPT Univer/DOANNNNNNNNN/Final/MLD_Project/Client&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;SCSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.deploy.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\damhu\\AppData\\Local\\JetBrains\\Toolbox\\apps\\IDEA-U\\ch-0\\233.14808.21\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\src\content\pages\Components" />
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\public" />
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\public\images" />
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\src" />
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\src\content\dashboards\Menu" />
+      <recent name="C:\Users\damhu\OneDrive\Desktop\SEP490\MLD_Project\Client\src\components\LandingPage" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+      </list>
+    </recent_temporary>
+  </component>
+>>>>>>> main
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-4f524021" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="053d1a97-111d-47b1-8fea-59ecbc932be8" name="Changes" comment="" />
+      <created>1713882236306</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+<<<<<<< HEAD
+      <updated>1713882236306</updated>
+      <workItem from="1713882237723" duration="784000" />
+      <workItem from="1713883255526" duration="3431000" />
+=======
+      <updated>1712053442172</updated>
+      <workItem from="1712053443461" duration="4347000" />
+      <workItem from="1712221414570" duration="1976000" />
+      <workItem from="1712338994648" duration="3628000" />
+      <workItem from="1712401174535" duration="10654000" />
+      <workItem from="1712414653602" duration="9694000" />
+      <workItem from="1712484260403" duration="9244000" />
+      <workItem from="1712576908444" duration="11412000" />
+      <workItem from="1712947941353" duration="1727000" />
+      <workItem from="1713110106830" duration="6000" />
+      <workItem from="1713110133502" duration="196000" />
+      <workItem from="1713110370848" duration="873000" />
+      <workItem from="1713187273940" duration="683000" />
+      <workItem from="1713269704739" duration="108000" />
+      <workItem from="1713269828465" duration="1661000" />
+      <workItem from="1713284442115" duration="652000" />
+>>>>>>> main
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
