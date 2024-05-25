@@ -35,11 +35,14 @@ import {
   apiGetCurriculumDistributionByDoc1Id,
   apiGetPeriodicAssessmentByDoc1Id,
   apiGetSelectedTopicByDoc1Id,
+  apiGetSelectedtopicBySubjectId,
   apiGetSubMenu1ById,
+  apiGetSubjectBySpeId,
   apiGetSubjectsRoomByDoc1Id,
   apiGetTeacherInformation,
   apiGetTeachingEquipmentByDoc1Id,
   apiGetTotalClassByGradeId,
+  apiGetcurriculumbySubjectId,
   apiPostSubMenu1,
   apiPostSubMenu1CuriculumDistribution,
   apiPostSubMenu1PeriodicAssessment,
@@ -105,9 +108,9 @@ interface Row5 {
   testingCategoryName: string;
   testingCategoryId: number;
   time: number | null;
-  date: string;
+  date: string | null;
   description: string;
-  formCategoryId: number | null;
+  formCategoryId: number;
 }
 
 const defaultRows: Row5[] = [
@@ -115,33 +118,33 @@ const defaultRows: Row5[] = [
     testingCategoryName: "Giữa Học kỳ 1",
     testingCategoryId: 1,
     time: null,
-    date: "",
+    date: formatDate(Date.now()),
     description: "",
-    formCategoryId: null,
+    formCategoryId: 1,
   },
   {
     testingCategoryName: "Cuối Học kỳ 1",
     testingCategoryId: 2,
     time: null,
-    date: "",
+    date: formatDate(Date.now()),
     description: "",
-    formCategoryId: null,
+    formCategoryId: 1,
   },
   {
     testingCategoryName: "Giữa Học kỳ 2",
     testingCategoryId: 3,
     time: null,
-    date: "",
+    date: formatDate(Date.now()),
     description: "",
-    formCategoryId: null,
+    formCategoryId: 1,
   },
   {
     testingCategoryName: "Cuối Học kỳ 2",
     testingCategoryId: 4,
     time: null,
-    date: "",
+    date: formatDate(Date.now()),
     description: "",
-    formCategoryId: null,
+    formCategoryId: 1,
   },
 ];
 
@@ -186,13 +189,14 @@ const SubMenu1Detail = () => {
   const [totalClass, setTotalClass] = useState<TotalClass>();
   const [teacherInfo, setTeacherInfo] = useState<TeacherInfo>();
   const [userInfoLogin, setUserInfoLogin] = useState<User>();
+  const [UserApproveBy, setUserApproveBy] = useState<User>();
   const [userInfoDocument, setUserInfoDocument] = useState<User>();
   const [reasonReport, setReasonReport] = useState("");
   const [descriptionRp, setDescriptionRp] = useState("");
 
   const [count, setCount] = useState(0);
-  const [truong, setTruong] = useState("");
-  const [to, setTo] = useState("");
+  const [subject, setSubject] = useState("");
+  const [grade, setGrade] = useState("");
   const [hoadDong, setHoatDong] = useState<number | null>(null);
   const [khoiLop, setKhoiLop] = useState<number | null>(null);
   const [startYear, setStartYear] = useState("");
@@ -228,9 +232,12 @@ const SubMenu1Detail = () => {
     fecthPrincipleAndTeacher()
   }, [specializedDepartment?.id])
 
+
+
   const getTargetElement = () => document.getElementById("main-content");
 
   const downloadPdf = async () => {
+    console.log(document1Info);
     try {
       const pdf = await generatePDF(getTargetElement, options);
       const formData = new FormData();
@@ -242,16 +249,17 @@ const SubMenu1Detail = () => {
       );
       if (response?.status === 200) {
         const res = await apiUpdateSubMenu1({
-          id: documentId,
+
+          id: document1Info?.id ?? documentId,
           linkFile: response?.data,
           subjectId: hoadDong,
           gradeId: khoiLop,
           userId: user?.userId,
         });
-        if (res && documentId) {
+        if (res && (document1Info?.id ?? documentId)) {
           setDisplayAddRow(!displayAddRow);
           alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
-          navigate(`/sub-menu-1/detail-view/${documentId}`);
+          navigate(`/sub-menu-1/detail-view/${document1Info?.id ?? documentId}`);
         }
       }
     } catch (error) {
@@ -271,6 +279,20 @@ const SubMenu1Detail = () => {
     };
     fetchUserInfoLogin();
   }, [user]);
+
+  useEffect(() => {
+    const fetchUserApprove = async () => {
+      if (document1Info?.approveBy) {
+        const res = await apiGetUser(document1Info?.approveBy);
+        if (res && res.data) {
+          const userData: any = res.data;
+          setUserApproveBy(userData);
+        }
+      }
+    };
+    fetchUserApprove();
+  });
+
 
   useEffect(() => {
     const fetchSpecializedDepartmentById = async () => {
@@ -307,6 +329,8 @@ const SubMenu1Detail = () => {
       }
     };
 
+
+
     const fetchGrade = async () => {
       const res = await apiGetGrade();
       if (res && res.data) {
@@ -316,10 +340,12 @@ const SubMenu1Detail = () => {
     };
 
     const fetchSubject = async () => {
-      const res = await apiGetSubject();
-      if (res && res.data) {
-        const subjectData: Subject[] = res.data;
-        setSubjects(subjectData);
+      if (userInfoLogin && !location.pathname.includes("view")) {
+        const res = await apiGetSubjectBySpeId(userInfoDocument?.departmentId ?? userInfoLogin?.departmentId);
+        if (res && res.data) {
+          const subjectData: Subject[] = res.data;
+          setSubjects(subjectData);
+        }
       }
     };
 
@@ -340,19 +366,25 @@ const SubMenu1Detail = () => {
     };
 
     const fetchSelectedTopic = async () => {
-      const res = await apiGetSelectedTopic();
-      if (res && res.data) {
-        const selectedTopicData: SelectedTopic[] = res.data;
-        setSelectedTopic(selectedTopicData);
+      if (document1Info) {
+        const res = await apiGetSelectedtopicBySubjectId(document1Info.subjectId);
+        if (res && res.data) {
+          const selectedTopicData: SelectedTopic[] = res.data;
+          setSelectedTopic(selectedTopicData);
+        }
       }
+
     };
 
     const fetchCurriculumDistribution = async () => {
-      const res = await apiGetCurriculumDistribution();
-      if (res && res.data) {
-        const curriculumDistributionData: CurriculumDistribution[] = res.data;
-        setCurriculumDistribution(curriculumDistributionData);
+      if (document1Info) {
+        const res = await apiGetcurriculumbySubjectId(document1Info.subjectId);
+        if (res && res.data) {
+          const curriculumDistributionData: CurriculumDistribution[] = res.data;
+          setCurriculumDistribution(curriculumDistributionData);
+        }
       }
+
     };
 
     const fetchTestingCategory = async () => {
@@ -508,38 +540,34 @@ const SubMenu1Detail = () => {
       if (khoiLop && user && hoadDong) {
         setOpen(true);
         const post = await apiPostSubMenu1({
-          name: "KẾ HOẠCH DẠY HỌC CỦA TỔ CHUYÊN MÔN MÔN HỌC/HOẠT ĐỘNG GIÁO DỤC",
+          name: "KẾ HOẠCH DẠY HỌC CỦA TỔ CHUYÊN MÔN MÔN HỌC/HOẠT ĐỘNG GIÁO DỤC MÔN " + subjects.find(obj => obj.id === hoadDong)?.name.toUpperCase() + " KHỐI " + grades.find(obj => obj.id === khoiLop)?.name,
           subjectId: hoadDong,
           gradeId: khoiLop,
           userId: user.userId,
           note: "",
           status: true,
           approveByName: "",
-          isApprove: 1,
+          isApprove: 2,
         });
         if (post) {
-          setDocumentId(post?.data?.id);
-          await apiPostNotification({
-            receiveBy: principleAndTeacher?.principle || [],
-            sentBy: user?.userId,
-            titleName: `${post?.data?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
-            message: `${post?.data?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
-            docType: 1,
-            docId: post?.data?.id,
-          });
+          setDocument1Info(post.data);
+
         }
       } else alert("Nhập đầy đủ thông tin!");
     } else {
       if (khoiLop && user && hoadDong) {
         setOpen(true);
-        await apiPostNotification({
-          receiveBy: principleAndTeacher?.principle || [],
-          sentBy: user?.userId,
-          titleName: `${document1Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
-          message: `${document1Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
-          docType: 1,
-          docId: document1Info?.id,
-        });
+        try {
+          await apiUpdateSubMenu1({
+            id: document1Info?.id,
+            subjectId: document1Info?.subjectId,
+            gradeId: document1Info?.gradeId,
+            userId: document1Info?.userId,
+            isApprove: 2,
+          });
+        } catch (error) {
+          alert("Không thể sửa");
+        }
       } else alert("Nhập đầy đủ thông tin!");
     }
   };
@@ -556,7 +584,7 @@ const SubMenu1Detail = () => {
         note: "",
         status: true,
         approveByName: "",
-        isAprrove: 2,
+        isAprrove: 1,
       });
       if (post) {
         setDocumentId(post?.data?.id);
@@ -569,7 +597,7 @@ const SubMenu1Detail = () => {
       setDisplayAddRow(!displayAddRow);
       setOpen(false);
       try {
-        await apiDeleteSubMenu1(documentId);
+        await apiDeleteSubMenu1(document1Info?.id);
       } catch (error) {
         console.error(error);
       }
@@ -699,52 +727,77 @@ const SubMenu1Detail = () => {
     }
   };
 
-  const handleAddDoc1 = async (documentId: any) => {
-    if (location.pathname.includes("edit"))
-      await apiDeleteDocument1ForeignTableByDocument1ID(documentId);
-    if (rows1 && rows2 && rows3 && rows4 && rows5) {
-      const rows1WithDocumentId = rows1.map((row) => ({
-        ...row,
-        document1Id: documentId,
-      }));
-      const res1 = await apiPostSubMenu1TeachingEquipment(
-        rows1WithDocumentId,
-        documentId
-      );
-      const rows2WithDocumentId = rows2.map((row) => ({
-        ...row,
-        document1Id: documentId,
-      }));
-      const res2 = await apiPostSubMenu1SubjectRooms(
-        rows2WithDocumentId,
-        documentId
-      );
-      const rows3WithDocumentId = rows3.map((row) => ({
-        ...row,
-        document1Id: documentId,
-      }));
-      const res3 = await apiPostSubMenu1CuriculumDistribution(
-        rows3WithDocumentId,
-        documentId
-      );
-      const rows4WithDocumentId = rows4.map((row) => ({
-        ...row,
-        document1Id: documentId,
-      }));
-      const res4 = await apiPostSubMenu1SelectedTopic(
-        rows4WithDocumentId,
-        documentId
-      );
-      const rows5WithDocumentId = rows5.map((row) => ({
-        ...row,
-        document1Id: documentId,
-      }));
-      const res5 = await apiPostSubMenu1PeriodicAssessment(rows5WithDocumentId);
-      if (res1 && res2 && res3 && res4 && res5) {
-        downloadPdf();
+  const handleAddDoc1 = async (document1Info: any) => {
+    const documentId = document1Info?.id;
+    console.log(document1Info.id);
+    if (documentId) {
+      if (location.pathname.includes("edit")) {
+        await apiDeleteDocument1ForeignTableByDocument1ID(document1Info?.id);
+        await apiPostNotification({
+          receiveBy: principleAndTeacher?.principle || [],
+          sentBy: user?.userId,
+          titleName: `${document1Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
+          message: `${document1Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
+          docType: 1,
+          docId: document1Info?.id,
+        });
       }
+      else {
+        await apiPostNotification({
+          receiveBy: principleAndTeacher?.principle || [],
+          sentBy: user?.userId,
+          titleName: `${document1Info?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
+          message: `${document1Info?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
+          docType: 1,
+          docId: document1Info?.id,
+        });
+
+      }
+      if (rows1 && rows2 && rows3 && rows4 && rows5) {
+        const rows1WithDocumentId = rows1.map((row) => ({
+          ...row,
+          document1Id: documentId,
+        }));
+        const res1 = await apiPostSubMenu1TeachingEquipment(
+          rows1WithDocumentId,
+          documentId
+        );
+        const rows2WithDocumentId = rows2.map((row) => ({
+          ...row,
+          document1Id: documentId,
+        }));
+        const res2 = await apiPostSubMenu1SubjectRooms(
+          rows2WithDocumentId,
+          documentId
+        );
+        const rows3WithDocumentId = rows3.map((row) => ({
+          ...row,
+          document1Id: documentId,
+        }));
+        const res3 = await apiPostSubMenu1CuriculumDistribution(
+          rows3WithDocumentId,
+          documentId
+        );
+        const rows4WithDocumentId = rows4.map((row) => ({
+          ...row,
+          document1Id: documentId,
+        }));
+        const res4 = await apiPostSubMenu1SelectedTopic(
+          rows4WithDocumentId,
+          documentId
+        );
+        const rows5WithDocumentId = rows5.map((row) => ({
+          ...row,
+          document1Id: documentId,
+        }));
+        const res5 = await apiPostSubMenu1PeriodicAssessment(rows5WithDocumentId);
+        if (res1 && res2 && res3 && res4 && res5) {
+          downloadPdf();
+        }
+      }
+      setOpen(false);
     }
-    setOpen(false);
+
   };
 
   return (
@@ -776,7 +829,6 @@ const SubMenu1Detail = () => {
                         <input
                           type="text"
                           placeholder="..........."
-                          onChange={(e) => setTruong(e.target.value)}
                         />
                       </div>
                     </div>
@@ -817,16 +869,50 @@ const SubMenu1Detail = () => {
                         fontWeight: "bold",
                       }}
                       onChange={(e) => {
-                        if (location.pathname.includes("create"))
-                          setHoatDong(parseInt(e.target.value));
+                        if (location.pathname.includes("create")) {
+                          const value = parseInt(e.target.value);
+                          setHoatDong(value);
+                          setSubject(e.target.name)
+
+                          // Function to fetch curriculum by subject ID
+                          const fetchCurriculumBySubjectId = async () => {
+                            try {
+                              const res = await apiGetcurriculumbySubjectId(value);
+                              if (res && res.data) {
+                                const curriculumData: CurriculumDistribution[] = res.data;
+                                setCurriculumDistribution(curriculumData);
+                              }
+                            } catch (error) {
+                              console.error("Error fetching curriculum data:", error);
+                            }
+                          };
+
+                          // Function to fetch selected topic by subject ID
+                          const fetchSelectedTopicBySubjectId = async () => {
+                            try {
+                              const res = await apiGetSelectedtopicBySubjectId(value);
+                              if (res && res.data) {
+                                const selectedTopicData: SelectedTopic[] = res.data;
+                                setSelectedTopic(selectedTopicData);
+                              }
+                            } catch (error) {
+                              console.error("Error fetching selected topic data:", error);
+                            }
+                          };
+
+                          // Call the appropriate fetch function
+                          fetchCurriculumBySubjectId();
+                          fetchSelectedTopicBySubjectId();
+                        }
+
                       }}
-                      value={document1Info?.subjectId ?? ""}
+                      value={document1Info?.subjectId ? document1Info?.subjectId : hoadDong ?? ""}
                     >
                       <option value="" disabled>
                         Chọn môn học
                       </option>
                       {subjects?.map((item) => (
-                        <option value={item?.id}>{item?.name}</option>
+                        <option value={item?.id}>{item?.name.toUpperCase()}</option>
                       ))}
                     </select>
 
@@ -837,7 +923,6 @@ const SubMenu1Detail = () => {
                     <select
                       id="grades"
                       style={{
-                        width: "70px",
                         height: "25px",
                         marginLeft: "4px",
                         border: "none",
@@ -849,8 +934,9 @@ const SubMenu1Detail = () => {
                       onChange={(e) => {
                         if (location.pathname.includes("create"))
                           setKhoiLop(parseInt(e.target.value));
+                        setGrade(e.target.name);
                       }}
-                      value={document1Info?.gradeId ?? ""}
+                      value={document1Info?.gradeId ? document1Info?.gradeId : khoiLop ?? ""}
                     >
                       <option value="" disabled>
                         Chọn lớp
@@ -1543,9 +1629,9 @@ const SubMenu1Detail = () => {
                               <TableCell align="center">
                                 <input
                                   type="date"
-                                  value={row.date ? formatDate(row.date) : ""}
+                                  value={row.date ? formatDate(row.date) : formatDate(Date.now())}
                                   onChange={(e) => {
-                                    const newValue = e.target.value;
+                                    const newValue = (e.target as HTMLInputElement).value;
                                     const updatedRows = [...rows5];
                                     updatedRows[index].date = newValue;
                                     setRows5(updatedRows);
@@ -1574,7 +1660,7 @@ const SubMenu1Detail = () => {
                                     border: "none",
                                     outline: "none",
                                   }}
-                                  value={row.formCategoryId ?? ""}
+                                  value={row.formCategoryId ?? 1}
                                   onChange={(e) => {
                                     const newValue = parseInt(e.target.value);
                                     const updatedRows = [...rows5];
@@ -1583,9 +1669,6 @@ const SubMenu1Detail = () => {
                                     setRows5(updatedRows);
                                   }}
                                 >
-                                  <option value="" disabled>
-                                    Chọn hình thức
-                                  </option>
                                   {formCategory?.map((item) => (
                                     <option value={item?.id}>
                                       {item?.name}
@@ -1598,6 +1681,83 @@ const SubMenu1Detail = () => {
                         </TableBody>
                       </Table>
                     </TableContainer>
+                  </div>
+                </div>
+              </div>
+              <div className="sub-menu-content-main-signature">
+                <div className="to-truong">
+                  <div>
+                    <strong>TỔ TRƯỞNG</strong>
+                  </div>
+                  <div>
+                    <i>(Ký và ghi rõ họ tên)</i>
+                  </div>
+                  <br /> <br />
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {/* <input
+                      type="text"
+                      placeholder="................................................................"
+                      style={{ width: "150px" }}
+                      onChange={(e) => setToTruong(e.target.value)}
+                    /> */}
+                    <img src={location.pathname.includes("create") ? userInfoLogin?.signature : userInfoDocument?.signature} alt="" style={{ width: "150px", height: "auto" }} />
+                    <p>
+                      {
+                        location.pathname.includes("create") ? userInfoLogin?.firstName + " " + userInfoLogin?.lastName : userInfoDocument?.firstName + " " + userInfoDocument?.lastName
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="hieu-truong">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="....................."
+                      style={{ width: "60px" }}
+                    />
+                    , ngày{" "}
+                    <input
+                      type="number"
+                      placeholder="....."
+                      style={{ width: "30px" }}
+                    />
+                    , tháng{" "}
+                    <input
+                      type="number"
+                      placeholder="....."
+                      style={{ width: "30px" }}
+                    />
+                    , năm 20{" "}
+                    <input
+                      type="number"
+                      placeholder="....."
+                      style={{ width: "30px" }}
+                    />
+                  </div>
+                  <div>
+                    <strong>HIỆU TRƯỞNG</strong>
+                  </div>
+                  <div>
+                    <i>(Ký và ghi rõ họ tên)</i>
+                  </div>
+                  <br /> <br />
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {UserApproveBy?.id === undefined ? (
+                      <input
+                        type="text"
+                        placeholder="................................................................"
+                        style={{ width: "150px" }}
+                        disabled
+                      />
+                    ) : (
+                      <>
+                        <img src={UserApproveBy?.signature} alt="" style={{ width: "150px", height: "auto" }} />
+                        <p>
+                          {UserApproveBy?.firstName + " " + UserApproveBy?.lastName}
+                        </p>
+                      </>
+                    )}
+
                   </div>
                 </div>
               </div>
@@ -1667,6 +1827,11 @@ const SubMenu1Detail = () => {
                 <strong>Người gửi: </strong>{" "}
                 <u className="underline-blue">{document1Info?.userFullName}</u>
               </div>
+              <div className="right-action" onClick={() => navigate(`/sub-menu-3/list-view/${document1Info?.id}`)}>
+                <strong>
+                  <u className="underline-blue">Xem các khung kế hoạch</u>
+                </strong>
+              </div>
             </div>
             <div className="sub-menu-row">
               <div>
@@ -1679,28 +1844,30 @@ const SubMenu1Detail = () => {
               </div>
             </div>
           </div>
-          <div>
-            {
-              user?.role === "principle" && <div className="sub-menu-action">
-                <div className="verify">
-                  <span>Tình trạng thẩm định:</span>
-                  <div style={{ display: "flex", columnGap: "10px" }}>
-                    <div
-                      className="action-button"
-                      onClick={handleClickOpenAccept}
-                    >
-                      Chấp thuận
-                    </div>
-                    <div className="action-button" onClick={handleClickOpenDeny}>
-                      Từ chối
-                    </div>
+          <div className="sub-menu-action">
+            <div
+              className="verify"
+              style={{
+                display:
+                  user?.role === "Principal" && document1Info?.isApprove === 2
+                    ? "flex"
+                    : "none",
+              }}
+            >
+              <span>Tình trạng thẩm định:</span>
+              {
+                <div style={{ display: "flex", columnGap: "10px" }}>
+                  <div
+                    className="action-button"
+                    onClick={handleClickOpenAccept}
+                  >
+                    Chấp thuận
+                  </div>
+                  <div className="action-button" onClick={handleClickOpenDeny}>
+                    Từ chối
                   </div>
                 </div>
-              </div>
-            }
-            <div className="sub-menu-note">
-              Ghi chú <br />
-              <textarea name="" id="" rows={8}></textarea>
+              }
             </div>
           </div>
         </>
@@ -1737,7 +1904,7 @@ const SubMenu1Detail = () => {
             Hủy bỏ
           </Button>
           <Button
-            onClick={() => handleAddDoc1(documentId)}
+            onClick={() => handleAddDoc1(document1Info)}
             className="button-mui"
             autoFocus
           >
@@ -1888,13 +2055,17 @@ const SubMenu1Detail = () => {
                   docId: document1Info?.id,
                 });
                 await apiPostNotification({
-                  receiveBy: hostByList || [],
+                  receiveBy: principleAndTeacher?.teacher || [],
                   sentBy: user?.userId,
                   titleName: `${document1Info?.name} ĐÃ ĐƯỢC CHẤP NHẬN, HÃY TẠO KHUNG KẾ HOẠCH`,
                   message: `${document1Info?.name} ĐÃ ĐƯỢC CHẤP NHẬN, HÃY TẠO KHUNG KẾ HOẠCH`,
                   docType: 1,
                   docId: document1Info?.id,
                 });
+                alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                navigate(`/sub-menu/1`);
+
+
               } catch (error) {
                 alert("Không thể xét duyệt");
               }
@@ -1949,6 +2120,16 @@ const SubMenu1Detail = () => {
                   isApprove: 4,
                   approveBy: user?.userId,
                 });
+                await apiPostNotification({
+                  receiveBy: [document1Info?.userId] || [],
+                  sentBy: user?.userId,
+                  titleName: `${document1Info?.name} ĐÃ BỊ TỪ CHỐI, HÃY SỬA LẠI`,
+                  message: `${document1Info?.name} ĐÃ BỊ TỪ CHỐI, HÃY SỬA LẠI`,
+                  docType: 1,
+                  docId: document1Info?.id,
+                });
+                alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                navigate(`/sub-menu/1`);
               } catch (error) {
                 alert("Không thể từ chối");
               }

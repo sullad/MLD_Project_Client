@@ -58,7 +58,7 @@ export const apiDeleteSubMenu2 = async (docId: any) => {
         return null;
 }
 
-export const apiUpdateSubMenu2 = async (data: any, docId: any) => {
+export const apiUpdateSubMenu2 = async (data: any) => {
     const result = await axios.put(`${base_url}Document2/UpdateDoc2`, data);
     if (result)
         return result;

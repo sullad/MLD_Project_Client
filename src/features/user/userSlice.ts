@@ -80,7 +80,7 @@ interface UserState {
   authStatus: number | null;
 }
 
-const initialState = {
+const initialState: UserState = {
   user: null,
   token: '',
   isError: false,
@@ -157,9 +157,7 @@ export const authSlice = createSlice({
             alert("Please change your password on first login.")
             state.loginStatus = 4
           }
-          else if (
-            action.payload.response?.data.status === LOGIN_STATUS.WRONG_PASSWORD
-          )
+          else 
             alert("Sai mật khẩu")
         },
       );

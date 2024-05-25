@@ -32,6 +32,9 @@ import { options } from "../UploadPhuLuc4";
 import axios from "axios";
 import { apiPostEvaluate } from "../../api/evaluate";
 
+import { apiGetUser } from "../../api/user";
+import { User } from "../../models/User";
+
 const SubMenu5Detail = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,6 +57,8 @@ const SubMenu5Detail = () => {
   const [document5Id, setDocument5Id] = useState<any>();
   const [document4Info, setDocument4Info] = useState<any>();
   const [document5Info, setDocument5Info] = useState<any>();
+  
+  const [userInfoDocument, setUserInfoDocument] = useState<User>();
 
   const [login, setLogin] = useState(false);
   const [open, setOpen] = useState(false);
@@ -63,6 +68,23 @@ const SubMenu5Detail = () => {
   const [openRemove, setOpenRemove] = useState(false);
 
   const user = useAppSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    const fetchUserinfo = async () => {
+      if (location.pathname.split("/")[3]) {
+        const fecthDoc = await apiGetSubMenu5ById(location.pathname.split("/")[3]);
+        if (fecthDoc && fecthDoc.data) {
+            const doc5Data = fecthDoc.data;
+            setDocument5Info(doc5Data);
+            const fetchUser = await apiGetUser(doc5Data?.userId);
+            if (fetchUser && fetchUser.data)
+              setUserInfoDocument(fetchUser?.data)
+          }
+        }
+      }
+    
+    fetchUserinfo();
+  }, [location.pathname]);
 
   const getTargetElement = () => document.getElementById("main-content");
 
@@ -83,17 +105,17 @@ const SubMenu5Detail = () => {
     ) {
       setTongDiem(
         tieuChi1 +
-          tieuChi2 +
-          tieuChi3 +
-          tieuChi4 +
-          tieuChi5 +
-          tieuChi6 +
-          tieuChi7 +
-          tieuChi8 +
-          tieuChi9 +
-          tieuChi10 +
-          tieuChi11 +
-          tieuChi12
+        tieuChi2 +
+        tieuChi3 +
+        tieuChi4 +
+        tieuChi5 +
+        tieuChi6 +
+        tieuChi7 +
+        tieuChi8 +
+        tieuChi9 +
+        tieuChi10 +
+        tieuChi11 +
+        tieuChi12
       );
     }
   }, [
@@ -133,8 +155,9 @@ const SubMenu5Detail = () => {
         );
         if (res && document5Id) {
           alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+          console.log(document5Id);
           navigate(
-            `/sub-menu-5/detail-view/${location.pathname.split("/")[3]}`
+            `/sub-menu-5/detail-view/${document5Id}`
           );
         }
       }
@@ -146,7 +169,7 @@ const SubMenu5Detail = () => {
   useEffect(() => {
     if (location.pathname.includes("view")) {
       const fecthDoc5Info = async () => {
-        const res = await apiGetSubMenu5ByDoc4Id(
+        const res = await apiGetSubMenu5ById(
           location.pathname.split("/")[3]
         );
         if (res && res.data) {
@@ -261,7 +284,7 @@ const SubMenu5Detail = () => {
       }
     } else alert("Nhập đầy đủ thông tin!");
   };
-  const handleClickOpen1 = async () => {};
+  const handleClickOpen1 = async () => { };
 
   const handleAddDoc5 = async () => {
     if (
@@ -360,7 +383,7 @@ const SubMenu5Detail = () => {
                     type="text"
                     placeholder="........................."
                     style={{ width: "90px" }}
-                    onChange={(e) => setTiet(parseInt(e.target.value))}
+                    onChange={(e) => setTiet(parseInt((e.target as HTMLInputElement).value))}
                   />
                 </div>
                 ;<div> Ngày: {new Date().toLocaleDateString("vi-VN")}</div>
@@ -409,7 +432,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi1 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -433,7 +456,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi2 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -456,7 +479,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi3 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -479,7 +502,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi4 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -507,7 +530,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi5 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -530,7 +553,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi6 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -554,7 +577,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi7 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -579,7 +602,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi8 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -606,7 +629,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi9 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -629,7 +652,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi10 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -653,7 +676,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi11 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -676,7 +699,7 @@ const SubMenu5Detail = () => {
                               type="number"
                               value={tieuChi12 ?? ""}
                               onChange={(e) => {
-                                const newValue = parseFloat(e.target.value);
+                                const newValue = parseFloat((e.target as HTMLInputElement).value);
                                 if (
                                   !isNaN(newValue) &&
                                   newValue >= 0 &&
@@ -723,7 +746,6 @@ const SubMenu5Detail = () => {
                       type="text"
                       placeholder="................................................................"
                       style={{ width: "150px" }}
-                      onChange={(e) => setNguoiDanhGia(e.target.value)}
                     />
                   </div>
                 </div>
@@ -743,102 +765,21 @@ const SubMenu5Detail = () => {
             height="1000px"
             type="application/pdf"
           />
-          <div>
-            <div className="sub-menu-action">
-              <div className="verify" style={{ justifyContent: "center" }}>
-                <div style={{ display: "flex", columnGap: "10px" }}>
-                  <div className="action-button" onClick={handleClickSave}>
-                    Sửa
-                  </div>
-                  <div
-                    className="action-button"
-                    onClick={handleClickOpenRemove}
-                  >
-                    Xóa
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="sub-menu-infomation">
             <div className="sub-menu-row">
               <div>
-                <i>(Tài liệu chưa được thẩm định)</i>
-              </div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
-                <strong>Nguồn: </strong> https://baigiang.violet.vn
-              </div>
-              <div className="right-action" onClick={handleClickOpenReport}>
-                <strong>
-                  <u className="underline-blue">Báo cáo tài liệu có sai sót</u>
-                </strong>
-              </div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
                 <strong>Người gửi: </strong>{" "}
-                <u className="underline-blue">Sam Dung</u>
-              </div>
-              <div className="right-action">
-                <strong>
-                  <u className="underline-blue">Nhắn tin cho tác giả</u>
-                </strong>
+                <u className="underline-blue">{userInfoDocument?.firstName+" "+userInfoDocument?.lastName}</u>
               </div>
             </div>
             <div className="sub-menu-row">
               <div>
-                <strong>Ngày gửi: </strong> 10h:34' 14-01-2024
+                <strong>Ngày gửi: </strong>{" "}
+                <u className="underline-blue">{document5Info?.createdDate}</u>
               </div>
-              <div className="right-action">
-                <div className="share-facebook">
-                  <img src="/facebook-circle-svgrepo-com.svg" alt="SVG" />
-                  <span>Chia sẻ</span>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
-                <strong>Dung lượng: </strong> 19/9 KB
-              </div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
-                <strong>Số lượt tải: </strong>25
-              </div>
-              <div className="right-action"></div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
-                <strong>Số lượt thích: </strong> 0 người
-              </div>
-              <div className="right-action"></div>
             </div>
           </div>
-          <div>
-            <div className="sub-menu-action">
-              <div className="verify">
-                <span>Tình trạng thẩm định:</span>
-                <div style={{ display: "flex", columnGap: "10px" }}>
-                  <div
-                    className="action-button"
-                    onClick={handleClickOpenAccept}
-                  >
-                    Chấp thuận
-                  </div>
-                  <div className="action-button" onClick={handleClickOpenDeny}>
-                    Từ chối
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="sub-menu-note">
-              Ghi chú <br />
-              <textarea name="" id="" rows={8} />
-            </div>
-          </div>
+          
         </>
       )}
       <Dialog
@@ -872,226 +813,16 @@ const SubMenu5Detail = () => {
           >
             Hủy bỏ
           </Button>
-          <Button onClick={handleAddDoc5} className="button-mui" autoFocus>
+          <Button
+            onClick={() => handleAddDoc5()}
+            className="button-mui"
+            autoFocus
+          >
             Đồng ý
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={openReport}
-        onClose={handleCloseReport}
-        maxWidth={"md"}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          style={{ textAlign: "center", fontWeight: 600 }}
-        >
-          Báo cáo tài liệu
-        </DialogTitle>
 
-        {login ? (
-          <>
-            <DialogContent>
-              <DialogContentText
-                id="alert-dialog-description"
-                style={{
-                  textAlign: "left",
-                  backgroundColor: "#D9D9D9",
-                  borderRadius: "20px",
-                  padding: "20px",
-                }}
-              >
-                <div className="report-row">
-                  <div className="report-title">Tài liệu</div>
-                  <div className="report-detail">Giáo án tài liệu A</div>
-                </div>
-                <div className="report-row">
-                  <div className="report-title">Lý do báo cáo</div>
-                  <div
-                    className="report-detail"
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <FormControlLabel
-                      value=""
-                      control={<Radio />}
-                      label="Có lỗi kỹ thuật ..."
-                    />
-                    <FormControlLabel
-                      value=""
-                      control={<Radio />}
-                      label="Không dùng để dạy học"
-                    />
-                    <FormControlLabel
-                      value=""
-                      control={<Radio />}
-                      label="Vi phạm bản quyền"
-                    />
-                    <FormControlLabel
-                      value=""
-                      control={<Radio />}
-                      label="Lý do khác"
-                    />
-                  </div>
-                </div>
-                <div className="report-row">
-                  <div className="report-title">Chi tiết lỗi</div>
-                  <div className="report-detail">
-                    <span style={{ whiteSpace: "nowrap" }}>
-                      Đề nghị cung cấp lý do và chỉ ra các điểm không chính xác
-                    </span>
-                    <br />
-                    <textarea name="" id="" rows={10} />
-                  </div>
-                </div>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleCloseReport}
-                style={{ color: "#000", fontWeight: 600 }}
-              >
-                {" "}
-                Quay lại trang
-              </Button>
-              <Button
-                onClick={handleCloseReport}
-                className="button-mui"
-                autoFocus
-              >
-                Gửi báo cáo
-              </Button>
-            </DialogActions>
-          </>
-        ) : (
-          <>
-            <DialogContent>
-              <DialogContentText
-                id="alert-dialog-description"
-                style={{
-                  textAlign: "left",
-                  fontWeight: 600,
-                  marginBottom: "12px",
-                }}
-              >
-                Bạn cần đăng nhập để thực hiện chức năng
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleCloseReport}
-                style={{ color: "#000", fontWeight: 600 }}
-              >
-                Hủy bỏ
-              </Button>
-              <Button
-                onClick={() => setLogin(true)}
-                className="button-mui"
-                autoFocus
-              >
-                Đăng nhập
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-      <Dialog
-        open={openAccept}
-        onClose={handleCloseAccept}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          style={{ textAlign: "center", fontWeight: 600 }}
-        >
-          Bạn có chắc chắn không
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-            style={{ textAlign: "center", fontWeight: 600 }}
-          >
-            Bạn có chắc muốn đưa phụ lục này vào thẩm duyệt
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseAccept}
-            style={{ color: "#000", fontWeight: 600 }}
-          >
-            Hủy bỏ
-          </Button>
-          <Button onClick={handleCloseAccept} className="button-mui" autoFocus>
-            Đồng ý
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={openDeny}
-        onClose={handleCloseDeny}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          style={{ textAlign: "center", fontWeight: 600 }}
-        >
-          Bạn có chắc chắn không
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-            style={{ textAlign: "center", fontWeight: 600 }}
-          >
-            Bạn có chắc muốn từ chối đưa phụ lục này vào thẩm duyệt
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseDeny}
-            style={{ color: "#000", fontWeight: 600 }}
-          >
-            Hủy bỏ
-          </Button>
-          <Button onClick={handleCloseDeny} className="button-mui" autoFocus>
-            Từ chối
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={openRemove}
-        onClose={handleCloseRemove}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          style={{ textAlign: "center", fontWeight: 600 }}
-        >
-          Bạn có chắc chắn không
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-            style={{ textAlign: "center", fontWeight: 600 }}
-          >
-            Bạn có chắc muốn xóa thay đổi không?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseRemove}
-            style={{ color: "#000", fontWeight: 600 }}
-          >
-            Hủy bỏ
-          </Button>
-          <Button onClick={handleCloseRemove} className="button-mui" autoFocus>
-            Xóa
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };

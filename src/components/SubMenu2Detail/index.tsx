@@ -83,7 +83,7 @@ const SubMenu2Detail = () => {
         titleName: "",
         description: "",
         slot: null,
-        time: "",
+        time: formatDate(Date.now()),
         place: "",
         hostBy: [0],
         collaborateWith: "",
@@ -98,6 +98,7 @@ const SubMenu2Detail = () => {
   const [openReport, setOpenReport] = useState(false);
   const [openRemove, setOpenRemove] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [UserApproveBy, setUserApproveBy] = useState<User>();
   const [specializedDepartment, setSpecializedDepartment] =
     useState<Department>();
   const [grades, setGrades] = useState<Grade[]>([]);
@@ -124,6 +125,18 @@ const SubMenu2Detail = () => {
 
   const getTargetElement = () => document.getElementById("main-content");
 
+  useEffect(() => {
+    const fetchUserApprove = async () => {
+      if (document2Info?.approveBy) {
+        const res = await apiGetUser(document2Info?.approveBy);
+        if (res && res.data) {
+          const userData: any = res.data;
+          setUserApproveBy(userData);
+        }
+      }
+    };
+    fetchUserApprove();
+  });
   const downloadPdf = async () => {
     try {
       const pdf = await generatePDF(getTargetElement, options);
@@ -136,13 +149,12 @@ const SubMenu2Detail = () => {
       );
       if (response?.status === 200) {
         const res = await apiUpdateSubMenu2(
-          { id: documentId, linkFile: response?.data, userId: user?.userId },
-          documentId
+          { id: document2Info?.id ?? documentId, linkFile: response?.data, userId: user?.userId }
         );
-        if (res && documentId) {
+        if (res && (document2Info?.id ?? documentId)) {
           setDisplayAddRow(!displayAddRow);
           alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
-          navigate(`/sub-menu-2/detail-view/${documentId}`);
+          navigate(`/sub-menu-2/detail-view/${document2Info?.id ?? documentId}`);
         }
       }
     } catch (error) {
@@ -166,10 +178,12 @@ const SubMenu2Detail = () => {
   useEffect(() => {
     const fecthPrincipleByDoc = async () => {
       if (document2Info) {
-        const res = await apiGetUser(document2Info?.approveBy)
-        if (res && res.data) {
-          const principleData: any = res.data;
-          setPrinciple(principleData);
+        if (document2Info?.approveBy !== null) {
+          const res = await apiGetUser(document2Info?.approveBy)
+          if (res && res.data) {
+            const principleData: any = res.data;
+            setPrinciple(principleData);
+          }
         }
       }
     }
@@ -190,6 +204,8 @@ const SubMenu2Detail = () => {
     };
     fecthPrincipleAndTeacher();
   }, [specializedDepartment?.id]);
+
+
   useEffect(() => {
     const fecthHostByList = async () => {
       if (document2Info) {
@@ -226,7 +242,7 @@ const SubMenu2Detail = () => {
         );
         if (res && res.data) {
           const gradeMap = new Map();
-
+          console.log(res);
           res.data.forEach((item: any, index: any) => {
             if (gradeMap.has(item.gradeId)) {
               const existingArray = gradeMap.get(item.gradeId);
@@ -237,9 +253,11 @@ const SubMenu2Detail = () => {
             }
             fecthTotalClass(item.gradeId, index);
           });
-
           const formatRes = Array.from(gradeMap.values());
+          
+          console.log(formatRes);
           setMultiRows(formatRes);
+          console.log(multiRows);
         }
         if (res?.data.length === 0) {
           setMultiRows([
@@ -263,22 +281,28 @@ const SubMenu2Detail = () => {
     }
   }, [location.pathname]);
 
+
   useEffect(() => {
     const fetchSpecializedDepartmentById = async () => {
-      if (!location.pathname.split("/")[3]) {
+      const docId = location.pathname.split("/")[3];
+      console.log(docId);
+      if (!docId) {
+        // Trường hợp không có docId, lấy dữ liệu từ userInfoLogin
         if (userInfoLogin) {
-          const res = await apiGetSpecializedDepartmentById(
-            userInfoLogin?.departmentId
-          );
+          const res = await apiGetSpecializedDepartmentById(userInfoLogin.departmentId);
           if (res && res.data) {
-            const departmentData: any = res.data;
+            const departmentData = res.data;
             setSpecializedDepartment(departmentData);
           }
+  
+          // Gọi hàm fetchAllUser với userInfoLogin
+          fetchAllUser(userInfoLogin);
         }
-      } else if (location.pathname.split("/")[3]) {
+      } else {
         const fecthDoc2 = await apiGetSubMenu2ById(
-          location.pathname.split("/")[3]
+          docId
         );
+        // Trường hợp có docId, lấy dữ liệu từ userInfoDocument
         if (fecthDoc2 && fecthDoc2.data) {
           const doc2Data: any = fecthDoc2.data;
           setDocument2Info(doc2Data);
@@ -289,16 +313,28 @@ const SubMenu2Detail = () => {
             const res = await apiGetSpecializedDepartmentById(
               userData?.departmentId
             );
-            if (res && res.data) {
-              const departmentData: any = res.data;
-              setSpecializedDepartment(departmentData);
-            }
-          }
+        }
+  
+          // Gọi hàm fetchAllUser với userInfoDocument
+          fetchAllUser(userInfoDocument);
         }
       }
     };
+  
+    const fetchAllUser = async (userInfo : any) => {
+      if (userInfo) {
+        const res = await apiGetUserHostBy(userInfo.departmentId);
+        if (res && res.data) {
+          const usersData: User[] = res.data;
+          setUsers(usersData);
+          console.log(users)
+        }
+      }
+    };
+  
     fetchSpecializedDepartmentById();
   }, [location.pathname, userInfoLogin]);
+  
 
   useEffect(() => {
     const fetchGrades = async () => {
@@ -312,18 +348,19 @@ const SubMenu2Detail = () => {
     fetchGrades();
   }, []);
 
-  useEffect(() => {
-    const fetchAllUser = async () => {
-      if (userInfoLogin) {
-        const res = await apiGetUserHostBy(userInfoLogin?.departmentId);
-        if (res && res.data) {
-          const usersData: User[] = res.data;
-          setUsers(usersData);
-        }
-      }
-    };
-    fetchAllUser();
-  }, [userInfoLogin]);
+  // useEffect(() => {
+  //     const fetchAllUser = async () => {
+  //       if (userInfoLogin  ) {
+  //         console.log(userInfoDocument);
+  //         const res = await apiGetUserHostBy(userInfoDocument?.departmentId ?? userInfoLogin?.departmentId);
+  //         if (res && res.data) {
+  //           const usersData: User[] = res.data;
+  //           setUsers(usersData);
+  //         }
+  //       }
+  //     };
+  //     fetchAllUser();
+  // }, [userInfoLogin]);
 
   const handleClickOpen = async () => {
     setDisplayAddRow(!displayAddRow);
@@ -343,10 +380,11 @@ const SubMenu2Detail = () => {
               createdDate: createdDate,
               status: true,
               approveByName: "",
-              isApprove: 1,
+              isApprove: 2,
             },
           ]);
           if (post) {
+            console.log(post);
             setDocumentId(post?.data[0]?.id);
             await apiPostNotification({
               receiveBy: principleAndTeacher?.principle || [],
@@ -354,7 +392,7 @@ const SubMenu2Detail = () => {
               titleName: `${post?.data[0].name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
               message: `${post?.data[0].name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
               docType: 2,
-              docId: post?.data?.id,
+              docId: post?.data[0]?.id,
             });
           }
         } catch (error) {
@@ -364,6 +402,14 @@ const SubMenu2Detail = () => {
     } else {
       if (user) {
         setOpen(true);
+        await apiUpdateSubMenu2(
+          {
+            id: document2Info?.id,
+            userId: document2Info?.userId,
+            isApprove: 2,
+            approveBy: user?.userId,
+          }
+        );
         await apiPostNotification({
           receiveBy: principleAndTeacher?.principle || [],
           sentBy: user?.userId,
@@ -393,7 +439,7 @@ const SubMenu2Detail = () => {
             createdDate: createdDate,
             status: true,
             approveByName: "",
-            isApprove: 2,
+            isApprove: 1,
           },
         ]);
         if (post) {
@@ -508,7 +554,7 @@ const SubMenu2Detail = () => {
         titleName: "",
         description: "",
         slot: null,
-        time: "",
+        time: formatDate(Date.now()),
         place: "",
         hostBy: [0],
         collaborateWith: "",
@@ -536,7 +582,7 @@ const SubMenu2Detail = () => {
       return accumulator;
     }, []);
     const rowsWithDocumentId = flattenedRows.map((row) => {
-      return { ...row, document2Id: documentId };
+      return { ...row, document2Id: document2Info?.id ?? documentId };
     });
 
     if (rowsWithDocumentId) {
@@ -596,7 +642,6 @@ const SubMenu2Detail = () => {
                       <input
                         type="text"
                         placeholder="..........."
-                        onChange={(e) => setTruong(e.target.value)}
                       />
                     </div>
                   </div>
@@ -631,7 +676,7 @@ const SubMenu2Detail = () => {
             </div>
 
             <div className="sub-menu-content-main">
-              {multiRows.map((subRows, indexGrade) => (
+              {multiRows?.map((subRows, indexGrade) => (
                 <Tooltip
                   key={indexGrade}
                   disableFocusListener
@@ -659,13 +704,11 @@ const SubMenu2Detail = () => {
                         <select
                           id="grade"
                           style={{
-                            width: "40px",
                             height: "20px",
                             marginLeft: "4px",
                             border: "none",
                             outline: "none",
                           }}
-                          value={gradeIds[indexGrade]?.gradeId ?? ""}
                           defaultValue={subRows[0]?.gradeId ?? ""}
                           onChange={(e) => {
                             const newValue = parseInt(e.target.value);
@@ -815,10 +858,10 @@ const SubMenu2Detail = () => {
                                     <input
                                       type="date"
                                       value={
-                                        row.time ? formatDate(row.time) : ""
+                                        row.time ? formatDate(row.time) : formatDate(Date.now())
                                       }
                                       onChange={(e) => {
-                                        const newValue = e.target.value;
+                                        const newValue = (e.target as HTMLInputElement).value;
                                         const updatedRows = [...multiRows];
                                         updatedRows[indexGrade][index].time =
                                           newValue;
@@ -862,9 +905,6 @@ const SubMenu2Detail = () => {
                                             setMultiRows(updatedRows);
                                           }}
                                         >
-                                          <option value={0} disabled>
-                                            Chọn chủ trì
-                                          </option>
                                           {users?.map((item) => (
                                             <option value={item?.id}>
                                               {item?.name}
@@ -1016,10 +1056,10 @@ const SubMenu2Detail = () => {
                       style={{ width: "150px" }}
                       onChange={(e) => setToTruong(e.target.value)}
                     /> */}
-                    <img src={userInfoLogin?.signature} alt="" style={{ width: "150px", height: "auto" }} />
+                    <img src={location.pathname.includes("create") ? userInfoLogin?.signature : userInfoDocument?.signature} alt="" style={{ width: "150px", height: "auto" }} />
                     <p>
                       {
-                        location.pathname.includes("create") ? userInfoLogin?.firstName + " " + userInfoLogin?.lastName : userInfoDocument?.fullName
+                        location.pathname.includes("create") ? userInfoLogin?.firstName + " " + userInfoLogin?.lastName : userInfoDocument?.firstName + " " + userInfoDocument?.lastName
                       }
                     </p>
                   </div>
@@ -1030,28 +1070,24 @@ const SubMenu2Detail = () => {
                       type="text"
                       placeholder="....................."
                       style={{ width: "60px" }}
-                      onChange={(e) => setDayOfWeek(e.target.value)}
                     />
                     , ngày{" "}
                     <input
                       type="number"
                       placeholder="....."
                       style={{ width: "30px" }}
-                      onChange={(e) => setDayOfMonth(e.target.value)}
                     />
                     , tháng{" "}
                     <input
                       type="number"
                       placeholder="....."
                       style={{ width: "30px" }}
-                      onChange={(e) => setMonth(e.target.value)}
                     />
                     , năm 20{" "}
                     <input
                       type="number"
                       placeholder="....."
                       style={{ width: "30px" }}
-                      onChange={(e) => setYear(e.target.value)}
                     />
                   </div>
                   <div>
@@ -1060,26 +1096,28 @@ const SubMenu2Detail = () => {
                   <div>
                     <i>(Ký và ghi rõ họ tên)</i>
                   </div>
-                  <br />
-                  <br />
-                  {
-                    document2Info?.approveBy !== null ? <input
-                      type="text"
-                      placeholder="................................................................"
-                      style={{ width: "150px" }}
-                      onChange={(e) => setToTruong(e.target.value)}
-                    /> :
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <img src={principle?.signature} alt="" style={{ width: "150px", height: "auto" }} />
+                  <br /> <br />
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {UserApproveBy?.id === undefined ? (
+                      <input
+                        type="text"
+                        placeholder="................................................................"
+                        style={{ width: "150px" }}
+                        disabled
+                      />
+                    ) : (
+                      <>
+                        <img src={UserApproveBy?.signature} alt="" style={{ width: "150px", height: "auto" }} />
                         <p>
-                          {
-                            document2Info?.approveBy ?? principle?.firstName + " " + principle?.lastName
-                          }
+                          {UserApproveBy?.firstName + " " + UserApproveBy?.lastName}
                         </p>
-                      </div>
-                  }
+                      </>
+                    )}
+
+                  </div>
                 </div>
               </div>
+              
             </div>
           </div>
           <div className="sub-menu-content-action">
@@ -1149,17 +1187,12 @@ const SubMenu2Detail = () => {
             </div>
             <div className="sub-menu-row">
               <div>
-                <strong>Nguồn: </strong> https://baigiang.violet.vn
+                <strong>Ngày gửi: </strong> {document2Info?.createdDate}
               </div>
               <div className="right-action" onClick={handleClickOpenReport}>
                 <strong>
                   <u className="underline-blue">Báo cáo tài liệu có sai sót</u>
                 </strong>
-              </div>
-            </div>
-            <div className="sub-menu-row">
-              <div>
-                <strong>Ngày gửi: </strong> {document2Info?.createdDate}
               </div>
             </div>
           </div>
@@ -1169,14 +1202,14 @@ const SubMenu2Detail = () => {
                 className="verify"
                 style={{
                   display:
-                    user?.role === "Principle" && document2Info?.isApprove === 2
+                    user?.role === "Principal" && document2Info?.isApprove === 2
                       ? "flex"
                       : "none",
                 }}
               >
                 <span>Tình trạng thẩm định:</span>
                 {
-                  user?.role === "principle" && <div style={{ display: "flex", columnGap: "10px" }}>
+                  <div style={{ display: "flex", columnGap: "10px" }}>
                     <div
                       className="action-button"
                       onClick={handleClickOpenAccept}
@@ -1190,10 +1223,7 @@ const SubMenu2Detail = () => {
                 }
               </div>
             </div>
-            <div className="sub-menu-note">
-              Ghi chú <br />
-              <textarea name="" id="" rows={8}></textarea>
-            </div>
+
           </div>
         </>
       )}
@@ -1361,8 +1391,7 @@ const SubMenu2Detail = () => {
                     userId: document2Info?.userId,
                     isApprove: 3,
                     approveBy: user?.userId,
-                  },
-                  document2Info?.id
+                  }
                 );
                 await apiPostNotification({
                   receiveBy: [document2Info?.userId] || [],
@@ -1380,6 +1409,8 @@ const SubMenu2Detail = () => {
                   docType: 2,
                   docId: document2Info?.id,
                 });
+                alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                navigate(`/sub-menu/2`);
               } catch (error) {
                 alert("Không thể xét duyệt");
               }
@@ -1428,8 +1459,7 @@ const SubMenu2Detail = () => {
                     userId: document2Info?.userId,
                     isApprove: 4,
                     approveBy: user?.userId,
-                  },
-                  document2Info?.id
+                  }
                 );
                 await apiPostNotification({
                   receiveBy: [document2Info?.userId] || [],
@@ -1439,6 +1469,8 @@ const SubMenu2Detail = () => {
                   docType: 2,
                   docId: document2Info?.id,
                 });
+                alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                navigate(`/sub-menu/1`);
               } catch (error) {
                 alert("Không thể từ chối");
               }

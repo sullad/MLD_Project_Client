@@ -157,17 +157,18 @@ const SubMenu3Detail = () => {
       if (response?.status === 200) {
         const res = await apiUpdateSubMenu3(
           {
-            id: documentId,
+            id: document3Info?.id ?? documentId,
             document1Id: location.pathname.includes("create") ? parseInt(document1Id) : document3Info?.document1Id,
             linkFile: response?.data,
             userId: user?.userId,
+            isApprove: 2,
           },
           documentId
         );
-        if (res && documentId) {
+        if (res && (document3Info?.id ?? documentId)) {
           setDisplayAddRow(!displayAddRow);
           alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
-          navigate(`/sub-menu-3/detail-view/${documentId}`);
+          navigate(`/sub-menu-3/detail-view/${(document3Info?.id ?? documentId)}`);
         }
       }
     } catch (error) {
@@ -247,32 +248,32 @@ const SubMenu3Detail = () => {
 
   useEffect(() => {
     const fetchSpecializedDepartmentById = async () => {
-      if (!location.pathname.includes("view")) {
-        let document1IdInit = 0;
-        if (location.pathname.includes("create"))
-          document1IdInit = parseInt(location.pathname.split("/")[3]);
-        else if (document3Info) document1IdInit = document3Info?.document1Id;
-        if (document1IdInit !== 0) {
-          const fecthDoc1 = await apiGetSubMenu1ById(document1IdInit);
-          if (fecthDoc1 && fecthDoc1.data) {
-            const doc1Data: any = fecthDoc1.data;
-            setDocument1Info(doc1Data);
-            const fecthUserResult = await apiGetUser(doc1Data?.userId);
-            if (fecthUserResult && fecthUserResult.data) {
-              const userData: any = fecthUserResult.data;
-              console.log("userData: ", userData);
-              setUserInfoDocument(userData);
-              const res = await apiGetSpecializedDepartmentById(
-                userData?.departmentId
-              );
-              if (res && res.data) {
-                const departmentData: any = res.data;
-                setSpecializedDepartment(departmentData);
-              }
+
+      let document1IdInit = 0;
+      if (location.pathname.includes("create"))
+        document1IdInit = parseInt(location.pathname.split("/")[3]);
+      else if (document3Info) document1IdInit = document3Info?.document1Id;
+      if (document1IdInit !== 0) {
+        const fecthDoc1 = await apiGetSubMenu1ById(document1IdInit);
+        if (fecthDoc1 && fecthDoc1.data) {
+          const doc1Data: any = fecthDoc1.data;
+          setDocument1Info(doc1Data);
+          const fecthUserResult = await apiGetUser(doc1Data?.userId);
+          if (fecthUserResult && fecthUserResult.data) {
+            const userData: any = fecthUserResult.data;
+            console.log("userData: ", userData);
+            setUserInfoDocument(userData);
+            const res = await apiGetSpecializedDepartmentById(
+              userData?.departmentId
+            );
+            if (res && res.data) {
+              const departmentData: any = res.data;
+              setSpecializedDepartment(departmentData);
             }
           }
         }
       }
+
     };
 
     const fetchTeachingEquipment = async () => {
@@ -425,38 +426,23 @@ const SubMenu3Detail = () => {
       if (khoiLop && user) {
         setOpen(true);
         const post = await apiPostSubMenu3({
-          name: "KẾ HOẠCH DẠY HỌC CỦA GIÁO VIÊN",
+          name: "KẾ HOẠCH DẠY HỌC CỦA GIÁO VIÊN MÔN HỌC/HOẠT ĐỘNG GIÁO DỤC MÔN " + subjects.find(obj => obj.id === document1Info?.subjectId)?.name.toUpperCase() + ",LỚP " + khoiLop,
           document1Id: document1Id,
           claasName: khoiLop,
           userId: parseInt(user.userId),
           note: "",
           status: true,
           approveByName: "",
-          isApprove: 1,
+          isApprove: 2,
         });
         if (post) {
           setDocumentId(post?.data?.id);
-          await apiPostNotification({
-            receiveBy: [document1Info?.userId] || [],
-            sentBy: user?.userId,
-            titleName: `${post?.data?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
-            message: `${post?.data?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
-            docType: 3,
-            docId: post.data.id,
-          });
         }
       } else alert("Nhập đầy đủ thông tin!");
     } else {
       if (user) {
         setOpen(true);
-        await apiPostNotification({
-          receiveBy: [document1Info?.userId] || [],
-          sentBy: user?.userId,
-          titleName: `${document3Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
-          message: `${document3Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
-          docType: 3,
-          docId: document3Info?.id,
-        });
+
       }
     }
   };
@@ -473,7 +459,7 @@ const SubMenu3Detail = () => {
         note: "",
         status: true,
         approveByName: "",
-        isApprove: 2,
+        isApprove: 1,
       });
       if (post) {
         setDocumentId(post?.data?.id);
@@ -494,29 +480,53 @@ const SubMenu3Detail = () => {
   };
 
   const handleAddDoc3 = async () => {
-    if (location.pathname.includes("edit")) {
-      await apiDeleteDocument3ForeignTableByDocument3ID(
-        location.pathname.split("/")[3]
-      );
-    }
-    if (rows1 && rows2) {
-      const rows1WithDocumentId = rows1.map((row) => ({
-        ...row,
-        document3Id: documentId ?? location.pathname.split('/')[3],
-      }));
-      const res1 = await apiPostSubMenu3CuriculumDistribution(
-        rows1WithDocumentId
-      );
-      const rows2WithDocumentId = rows2.map((row) => ({
-        ...row,
-        document3Id: documentId ?? location.pathname.split('/')[3],
-      }));
-      const res2 = await apiPostSubMenu3SelectedTopics(rows2WithDocumentId);
-      if (res1 && res2) {
-        downloadPdf();
+    const docId = document3Info?.id ?? documentId ;
+    console.log(documentId);
+    if (documentId) {
+      if (location.pathname.includes("edit")) {
+        await apiDeleteDocument3ForeignTableByDocument3ID(
+          location.pathname.split("/")[3]
+        );
+        await apiPostNotification({
+          receiveBy: [document1Info?.userId] || [],
+          sentBy: user?.userId,
+          titleName: `${document3Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
+          message: `${document3Info?.name} ĐÃ ĐƯỢC CHỈNH SỬA, HÃY XÉT DUYỆT`,
+          docType: 3,
+          docId: document3Info?.id,
+        });
       }
+      else {
+        await apiPostNotification({
+          receiveBy: [document1Info?.userId] || [],
+          sentBy: user?.userId,
+          titleName: `${document3Info?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
+          message: `${document3Info?.name} ĐÃ ĐƯỢC ĐĂNG TẢI, HÃY XÉT DUYỆT`,
+          docType: 3,
+          docId: document3Info?.id,
+        });
+      }
+      if (rows1 && rows2) {
+        const rows1WithDocumentId = rows1.map((row) => ({
+          ...row,
+          document3Id: documentId ?? location.pathname.split('/')[3],
+        }));
+        const res1 = await apiPostSubMenu3CuriculumDistribution(
+          rows1WithDocumentId
+        );
+        const rows2WithDocumentId = rows2.map((row) => ({
+          ...row,
+          document3Id: documentId ?? location.pathname.split('/')[3],
+        }));
+        const res2 = await apiPostSubMenu3SelectedTopics(rows2WithDocumentId);
+        if (res1 && res2) {
+          downloadPdf();
+        }
+      }
+      setOpen(false);
+
     }
-    setOpen(false);
+
   };
 
   const handleClickOpenAccept = () => {
@@ -666,7 +676,6 @@ const SubMenu3Detail = () => {
                         <input
                           type="text"
                           placeholder="..........."
-                          onChange={(e) => setTruong(e.target.value)}
                         />
                       </div>
                     </div>
@@ -715,7 +724,7 @@ const SubMenu3Detail = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {document1Info?.subjectName}
+                      {document1Info?.subjectName.toUpperCase()}
                     </span>
                     <strong>, LỚP</strong>
                     <select
@@ -855,7 +864,7 @@ const SubMenu3Detail = () => {
                                     type="date"
                                     value={row.time ? formatDate(row.time) : ""}
                                     onChange={(e) => {
-                                      const newValue = e.target.value;
+                                      const newValue = (e.target as HTMLInputElement).value;
                                       const updatedRows = [...rows1];
                                       updatedRows[index].time = newValue;
                                       setRows1(updatedRows);
@@ -1100,7 +1109,7 @@ const SubMenu3Detail = () => {
                                     type="date"
                                     value={row.time ? formatDate(row.time) : ""}
                                     onChange={(e) => {
-                                      const newValue = e.target.value;
+                                      const newValue = (e.target as HTMLInputElement).value;
                                       const updatedRows = [...rows2];
                                       updatedRows[index].time = newValue;
                                       setRows2(updatedRows);
@@ -1283,7 +1292,6 @@ const SubMenu3Detail = () => {
                         type="text"
                         placeholder="................................................................"
                         style={{ width: "150px" }}
-                        onChange={(e) => setToTruong(e.target.value)}
                       />
                     </div>
                   </div>
@@ -1293,28 +1301,24 @@ const SubMenu3Detail = () => {
                         type="text"
                         placeholder="....................."
                         style={{ width: "60px" }}
-                        onChange={(e) => setDayOfWeek(e.target.value)}
                       />
                       , ngày{" "}
                       <input
                         type="number"
                         placeholder="....."
                         style={{ width: "30px" }}
-                        onChange={(e) => setDayOfMonth(e.target.value)}
                       />
                       , tháng{" "}
                       <input
                         type="number"
                         placeholder="....."
                         style={{ width: "30px" }}
-                        onChange={(e) => setMonth(e.target.value)}
                       />
                       , năm 20{" "}
                       <input
                         type="number"
                         placeholder="....."
                         style={{ width: "30px" }}
-                        onChange={(e) => setYear(e.target.value)}
                       />
                     </div>
                     <div>
@@ -1329,7 +1333,6 @@ const SubMenu3Detail = () => {
                         type="text"
                         placeholder="................................................................"
                         style={{ width: "150px" }}
-                        onChange={(e) => setHieuTruong(e.target.value)}
                       />
                     </div>
                   </div>
@@ -1399,6 +1402,13 @@ const SubMenu3Detail = () => {
                     {document3Info?.userFullName}
                   </u>
                 </div>
+                <div className="right-action" onClick={() => navigate(`/sub-menu-4/list-view/${document3Info?.id}`)}>
+                  <strong>
+                    <u className="underline-blue">
+                      Xem các kế hoạch bài dạy
+                    </u>
+                  </strong>
+                </div>
               </div>
               <div className="sub-menu-row">
                 <div>
@@ -1416,40 +1426,50 @@ const SubMenu3Detail = () => {
                 <div>
                   <strong>Ngày gửi: </strong> {document3Info?.createdDate}
                 </div>
+                <div
+                  style={{
+                    display:
+                      userInfoLogin?.id === document3Info?.userId && document3Info?.isApprove === 3
+                        ? "flex"
+                        : "none",
+                  }}
+                  className="right-action" onClick={() => navigate(`/upload-sub-menu-4/${document3Info?.id}`)}>
+                  <strong>
+                    <u className="underline-blue">
+                      Tạo kế hoạch bài dạy
+                    </u>
+                  </strong>
+                </div>
               </div>
             </div>
             <div>
               <div className="sub-menu-action">
-                <div className="verify">
+                <div
+                  className="verify"
+                  style={{
+                    display:
+                      user?.role === "Leader" && document3Info?.isApprove === 2 && userInfoLogin?.departmentId === userInfoDocument?.departmentId
+                        ? "flex"
+                        : "none",
+                  }}
+                >
                   <span>Tình trạng thẩm định:</span>
-                  <div
-                    style={{
-                      display:
-                        parseInt(user?.userId) === document1Info?.userId
-                          ? "flex"
-                          : "none",
-                      columnGap: "10px",
-                    }}
-                  >
-                    <div
-                      className="action-button"
-                      onClick={handleClickOpenAccept}
-                    >
-                      Chấp thuận
+                  {
+                    <div style={{ display: "flex", columnGap: "10px" }}>
+                      <div
+                        className="action-button"
+                        onClick={handleClickOpenAccept}
+                      >
+                        Chấp thuận
+                      </div>
+                      <div className="action-button" onClick={handleClickOpenDeny}>
+                        Từ chối
+                      </div>
                     </div>
-                    <div
-                      className="action-button"
-                      onClick={handleClickOpenDeny}
-                    >
-                      Từ chối
-                    </div>
-                  </div>
+                  }
                 </div>
               </div>
-              <div className="sub-menu-note">
-                Ghi chú <br />
-                <textarea name="" id="" rows={8}></textarea>
-              </div>
+
             </div>
           </>
         )}
@@ -1633,6 +1653,8 @@ const SubMenu3Detail = () => {
                     docType: 3,
                     docId: document3Info?.id,
                   });
+                  alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                  navigate(`/sub-menu/3`);
                 } catch (error) {
                   alert("Không thể xét duyệt");
                 }
@@ -1693,6 +1715,8 @@ const SubMenu3Detail = () => {
                     docType: 3,
                     docId: document3Info?.id,
                   });
+                  alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                  navigate(`/sub-menu/3`);
                 } catch (error) {
                   alert("Không thể từ chối");
                 }

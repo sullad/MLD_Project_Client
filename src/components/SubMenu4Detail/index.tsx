@@ -13,11 +13,15 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import { apiGetSubMenu4ById } from "../../api/subMenu4";
+import { apiGetSubMenu4ById,  apiUpdateSubMenu4 } from "../../api/subMenu4";
 import { apiPostReport } from "../../api/report";
 import { useAppSelector } from "../../hook/useTypedSelector";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { apiGetUser } from "../../api/user";
+import { User } from "../../models/User";
+import { apiGetTeachingPlannerById } from "../../api/teachingPlanner";
+import { apiPostNotification } from "../../api/notification";
 
 const SubMenu4Detail = () => {
   const location = useLocation();
@@ -30,6 +34,12 @@ const SubMenu4Detail = () => {
   const [openRemove, setOpenRemove] = useState(false);
   const [reasonReport, setReasonReport] = useState("");
   const [descriptionRp, setDescriptionRp] = useState("");
+  const [userInfoLogin, setUserInfoLogin] = useState<User>();
+  const [userInfoDocument, setUserInfoDocument] = useState<User>();
+
+  const [openDeny, setOpenDeny] = useState(false);
+
+  const [openAccept, setOpenAccept] = useState(false);
 
   const user = useAppSelector((state) => state.auth.user);
   useEffect(() => {
@@ -41,6 +51,55 @@ const SubMenu4Detail = () => {
     };
     fecthDoc4();
   }, [location.pathname]);
+
+  useEffect(() => {
+    const fetchUserInfoLogin = async () => {
+      if (user) {
+        const res = await apiGetUser(user?.userId);
+        if (res && res.data) {
+          const userData: any = res.data;
+          setUserInfoLogin(userData);
+        }
+      }
+    };
+    fetchUserInfoLogin();
+  }, [user]);
+
+
+  useEffect(() => {
+    const fetchUserinfo = async () => {
+      if (location.pathname.split("/")[3]) {
+        const fecthDoc = await apiGetSubMenu4ById(location.pathname.split("/")[3]);
+        if (fecthDoc && fecthDoc.data) {
+          const doc4Data: any = fecthDoc.data;
+          setDocument4Info(doc4Data);
+          const fecthTPResult = await apiGetTeachingPlannerById(doc4Data?.teachingPlannerId);
+          if (fecthTPResult && fecthTPResult.data) {
+            const tpData = fecthTPResult.data;
+            const fetchUser = await apiGetUser(tpData?.userId);
+            if (fetchUser && fetchUser.data)
+              setUserInfoDocument(fetchUser?.data)
+          }
+        }
+      }
+    }
+    fetchUserinfo();
+  }, [location.pathname]);
+  const handleCloseAccept = () => {
+    setOpenAccept(false);
+  };
+
+  const handleCloseDeny = () => {
+    setOpenDeny(false);
+  };
+
+  const handleClickOpenAccept = () => {
+    setOpenAccept(true);
+  };
+
+  const handleClickOpenDeny = () => {
+    setOpenDeny(true);
+  };
 
   const handleClickOpenReport = () => {
     setOpenReport(true);
@@ -96,7 +155,7 @@ const SubMenu4Detail = () => {
             <div
               style={{
                 display:
-                  parseInt(user?.userId) === document4Info?.userId
+                  parseInt(user?.userId) === userInfoDocument?.id
                     ? "flex"
                     : "none",
                 columnGap: "10px",
@@ -115,7 +174,11 @@ const SubMenu4Detail = () => {
       <div className="sub-menu-infomation">
         <div className="sub-menu-row">
           <div>
-            <strong>Nguồn: </strong> https://baigiang.violet.vn
+            <i>
+              {document4Info?.isApprove === 3
+                ? "(Tài liệu đã được thẩm định)"
+                : "(Tài liệu chưa được thẩm định)"}
+            </i>
           </div>
           <div className="right-action" onClick={handleClickOpenReport}>
             <strong>
@@ -126,69 +189,67 @@ const SubMenu4Detail = () => {
         <div className="sub-menu-row">
           <div>
             <strong>Người gửi: </strong>{" "}
-            <u className="underline-blue">Sam Dung</u>
+            <u className="underline-blue">{userInfoDocument?.firstName + " " + userInfoDocument?.lastName}</u>
           </div>
-        </div>
-        <div className="sub-menu-row">
-          <div>
-            <strong>Ngày gửi: </strong> 10h:34' 14-01-2024
-          </div>
-        </div>
-        <div className="sub-menu-row">
-          <div>
-            <strong>Dung lượng: </strong> 19/9 KB
-          </div>
-          <div className="right-action" onClick={handleClickOpenFeedback}>
+          <div
+          style={{
+            display:
+            (user?.role === "Leader" && document4Info?.isApprove === 3 && userInfoLogin?.departmentId === userInfoDocument?.departmentId) ?? user?.role === "Principal"
+                ? "flex"
+                : "none",
+            columnGap: "10px",
+          }} 
+          className="right-action" onClick={handleClickOpenFeedback}>
             <strong>
               <u className="underline-blue">Tạo đánh giá của bài dạy</u>
             </strong>
           </div>
         </div>
         <div className="sub-menu-row">
-          <div>
-            <strong>Dung lượng: </strong> 19/9 KB
-          </div>
-          <div
-            className="right-action"
-            onClick={() => {
-              navigate(
-                `/sub-menu-5/detail-view/${location.pathname.split("/")[3]}`
-              );
-            }}
-          >
-            <strong>
-              <u className="underline-blue">
-                Đi đến phụ lục đánh giá của bài dạy
-              </u>
-            </strong>
-          </div>
+        <div>
+          <strong>Ngày gửi: </strong>{" "}
+          <u className="underline-blue">{document4Info?.createdDate}</u>
+
         </div>
-        <div className="sub-menu-row">
-          <div>
-            <strong>Dung lượng: </strong> 19/9 KB
-          </div>
-          <div
+
+        <div
             className="right-action"
             onClick={() => {
-              navigate("/sub-menu/5");
+              navigate(`/sub-menu-5/list-view/${document4Info?.id}`);
             }}
           >
             <strong>
               <u className="underline-blue">Xem các đánh giá khác</u>
             </strong>
           </div>
-        </div>
-        <div className="sub-menu-row">
-          <div>
-            <strong>Số lượt tải: </strong>25
-          </div>
-          <div className="right-action"></div>
-        </div>
-        <div className="sub-menu-row">
-          <div>
-            <strong>Số lượt thích: </strong> 0 người
-          </div>
-          <div className="right-action"></div>
+
+      </div>
+      </div>
+      
+      <div className="sub-menu-action">
+        <div
+          className="verify"
+          style={{
+            display:
+              user?.role === "Leader" && document4Info?.isApprove === 2 && userInfoLogin?.departmentId === userInfoDocument?.departmentId
+                ? "flex"
+                : "none",
+          }}
+        >
+          <span>Tình trạng thẩm định:</span>
+          {
+            <div style={{ display: "flex", columnGap: "10px" }}>
+              <div
+                className="action-button"
+                onClick={handleClickOpenAccept}
+              >
+                Chấp thuận
+              </div>
+              <div className="action-button" onClick={handleClickOpenDeny}>
+                Từ chối
+              </div>
+            </div>
+          }
         </div>
       </div>
       <Dialog
@@ -283,6 +344,168 @@ const SubMenu4Detail = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+          open={openAccept}
+          onClose={handleCloseAccept}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle
+            id="alert-dialog-title"
+            style={{ textAlign: "center", fontWeight: 600 }}
+          >
+            Bạn có chắc chắn không
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              id="alert-dialog-description"
+              style={{ textAlign: "center", fontWeight: 600 }}
+            >
+              Bạn có chắc muốn đưa phụ lục này vào thẩm duyệt
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseAccept}
+              style={{ color: "#000", fontWeight: 600 }}
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  await apiUpdateSubMenu4(
+                    {
+                      id: document4Info?.id,
+                      teachingPlannerId: document4Info?.teachingPlannerId,
+                      isApprove : 3,
+                      approveBy : userInfoLogin?.id,
+                    },
+                    document4Info?.id
+                  );
+                  await apiPostNotification({
+                    receiveBy: [userInfoDocument?.id] || [],
+                    sentBy: user?.userId,
+                    titleName: `KẾ HOẠCH BÀI DẠY : ${document4Info?.name.toUpperCase()} ĐÃ ĐƯỢC CHẤP NHẬN`,
+                    message: `KẾ HOẠCH BÀI DẠY : ${document4Info?.name} ĐÃ ĐƯỢC CHẤP NHẬN`,
+                    docType: 4 ,
+                    docId: document4Info?.id,
+                  });
+                  alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                  navigate(`/sub-menu/4`);
+                } catch (error) {
+                  alert("Không thể xét duyệt");
+                }
+                setOpenAccept(false);
+              }}
+              className="button-mui"
+              autoFocus
+            >
+              Đồng ý
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={openDeny}
+          onClose={handleCloseDeny}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle
+            id="alert-dialog-title"
+            style={{ textAlign: "center", fontWeight: 600 }}
+          >
+            Bạn có chắc chắn không
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              id="alert-dialog-description"
+              style={{ textAlign: "center", fontWeight: 600 }}
+            >
+              Bạn có chắc muốn từ chối đưa phụ lục này vào thẩm duyệt
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseDeny}
+              style={{ color: "#000", fontWeight: 600 }}
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  await apiUpdateSubMenu4(
+                    {
+                      id: document4Info?.id,
+                      document1Id: document4Info?.document1Id,
+                      userId: document4Info?.userId,
+                      isApprove: 4,
+                      approveBy: userInfoLogin?.id,
+                    },
+                    document4Info?.id
+                  );
+                  await apiPostNotification({
+                    receiveBy: [document4Info?.userId] || [],
+                    sentBy: user?.userId,
+                    titleName: `KẾ HOẠCH BÀI DẠY : ${document4Info?.name.toUpperCase()} ĐÃ BỊ TỪ CHỐI, HÃY ĐĂNG TẢI LẠI`,
+                    message: `KẾ HOẠCH BÀI DẠY : ${document4Info?.name} ĐÃ BỊ TỪ CHỐI, HÃY ĐĂNG TẢI LẠI`,
+                    docType: 4,
+                    docId: document4Info?.id,
+                  });
+                  alert("Thành công! Hãy chờ đợi trong giây lát để chuyển trang");
+                  navigate(`/sub-menu/3`);
+                } catch (error) {
+                  alert("Không thể từ chối");
+                }
+                setOpenDeny(false);
+              }}
+              className="button-mui"
+              autoFocus
+            >
+              Chắc chắn
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* <Dialog
+          open={openRemove}
+          onClose={handleCloseRemove}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle
+            id="alert-dialog-title"
+            style={{ textAlign: "center", fontWeight: 600 }}
+          >
+            Bạn có chắc chắn không
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              id="alert-dialog-description"
+              style={{ textAlign: "center", fontWeight: 600 }}
+            >
+              Bạn có chắc muốn xóa tài liệu này không?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseRemove}
+              style={{ color: "#000", fontWeight: 600 }}
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              onClick={async () => {
+                await apiDeleteSubMenu4(location.pathname.split("/")[3]);
+                navigate("/sub-menu/3");
+              }}
+              className="button-mui"
+              autoFocus
+            >
+              Xóa
+            </Button>
+          </DialogActions>
+        </Dialog> */}
       <Dialog
         open={openFeedback}
         onClose={handleCloseFeedback}

@@ -46,7 +46,7 @@ const LeftSubNavBar = () => {
   return (
     <Grid item xs={2} style={{ padding: 0 }}>
       <div className="sub-nav-bar sub-nav-bar-left">
-        <div className="sub-nav-bar-item">
+        {/* <div className="sub-nav-bar-item">
           <div className="sub-nav-bar-item-name">Thư mục</div>
           <div className="sub-nav-bar-item-content">
             <div className="sub-nav-bar-item-content-folder">
@@ -57,7 +57,7 @@ const LeftSubNavBar = () => {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="sub-nav-bar-item">
           <div className="sub-nav-bar-item-name">Thông báo</div>
           <div

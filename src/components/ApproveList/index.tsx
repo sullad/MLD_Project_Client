@@ -32,6 +32,7 @@ import { apiGetDoc2 } from '../../api/doc2';
 import { Document2 } from '../../models/document2';
 import { apiGetDoc3 } from '../../api/doc3';
 import { Document3 } from '../../models/document3';
+import { apiGetDocByUserAndApproveId } from '../../api/common';
 
 
 
@@ -107,36 +108,6 @@ const MyComponent = () => {
     const handleSelectOption = (option: string) => {
         setSelectedOption(option);
     };
-
-    useEffect(() => {
-        // Kiểm tra nếu selectedOption không phải là null và có giá trị là "1", "2", hoặc "3"
-        if (selectedOption && ["1", "2", "3"].includes(selectedOption)) {
-            fetchData(selectedOption); // Gọi hàm fetchData với selectedOption
-        }
-    }, [selectedOption]); // Chạy useEffect mỗi khi selectedOption thay đổi
-
-    const fetchData = async (option: string) => {
-        try {
-            let result;
-            if (option === "1") {
-                result = await apiGetDoc(); // Gọi API để lấy dữ liệu từ Document1
-            } else if (option === "2") {
-                result = await apiGetDoc2(); // Gọi API để lấy dữ liệu từ Document2
-            } else if (option === "3") {
-                result = await apiGetDoc3(); // Gọi API để lấy dữ liệu từ Document3
-            }
-
-            if (result && result.data) {
-                const documents: Document1[] = result.data; // Lấy dữ liệu từ kết quả trả về
-                // Xử lý dữ liệu ở đây...
-            } else {
-                console.log("Không có dữ liệu trả về từ API");
-            }
-        } catch (error) {
-            console.error("Lỗi khi gọi API: ", error);
-        }
-    };
-
     return (
         <div className="dropdown">
             {/* Button để mở dropdown */}

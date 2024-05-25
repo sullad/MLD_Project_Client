@@ -59,3 +59,10 @@ export const apiUpdateSubMenu4 = async (data: any, docId: any) => {
         return null;
 }
 
+export const apiGetDoc4ByDoc3Id = async (docId: any) => {
+    const result = await axios.get(`${base_url}Document4/GetDocument4sByDoc3Id?doc3Id=${docId}`);
+    if (result)
+        return result;
+    else
+        return null;
+}

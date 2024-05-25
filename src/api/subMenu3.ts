@@ -91,4 +91,18 @@ export const apiDeleteDocument3ForeignTableByDocument3ID = async (docId: any) =>
         return null;
 }
 
+export const apiGetDoc3ByDoc1Id = async (docId: any) => {
+    const result = await axios.get(`${base_url}Document3/GetAllDoc3sByDoc1Id?doc1Id=${docId}`);
+    if (result)
+        return result;
+    else
+        return null;
+}
 
+export const apiGetDoc3InformationByDoc3Id = async (docId: any) => {
+    const result = await axios.get(`${base_url}Document3/GetDoc3InformationByDoc3Id?doc3Id=${parseInt(docId)}`);
+    if (result)
+        return result;
+    else
+        return null;
+}

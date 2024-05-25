@@ -219,7 +219,7 @@ const Header = () => {
                     PHỤ LỤC 2
                   </Link>
                 </ListItem>
-                <ListItem
+                {/* <ListItem
                   button
                   style={{ listStyleType: "none", paddingLeft: "20px" }}
                 >
@@ -234,17 +234,17 @@ const Header = () => {
                   <Link to="/sub-menu/4" style={{ color: "black" }}>
                     PHỤ LỤC 4
                   </Link>
-                </ListItem>
+                </ListItem> */}
               </List>
             </Collapse>
           </div>
         </ListItem>
-        <ListItem button>
+        {/* <ListItem button>
           <Book />
           <Link to="/bai-giang-scrom" style={{ color: "black" }}>
             BÀI GIẢNG SCROM
           </Link>
-        </ListItem>
+        </ListItem> */}
         <ListItem button onClick={() => setOpenNews(!openNews)}>
           <div
             style={{
@@ -270,7 +270,7 @@ const Header = () => {
                 <ExpandMoreIcon onClick={handleNewsClick} />
               )}
             </div>
-            <Collapse in={openNews} timeout="auto" unmountOnExit>
+            {/* <Collapse in={openNews} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem
                   button
@@ -305,7 +305,7 @@ const Header = () => {
                   </Link>
                 </ListItem>
               </List>
-            </Collapse>
+            </Collapse> */}
           </div>
         </ListItem>
 
@@ -328,8 +328,6 @@ const Header = () => {
     };
     verifyToken();
   }, [dispatch, isLogin]);
-
-  console.log(location.pathname.split("/"));
 
   useEffect(() => {
     if (authStatus === 1) {
@@ -425,15 +423,15 @@ const Header = () => {
                 <li>
                   <Link to="/sub-menu/2">PHỤ LỤC 2</Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link to="/sub-menu/3">PHỤ LỤC 3</Link>
                 </li>
                 <li>
                   <Link to="/sub-menu/4">PHỤ LỤC 4</Link>
-                </li>
+                </li> */}
               </ul>
             </div>
-            <div className="item-header">
+            {/* <div className="item-header">
               <Link to="/bai-giang-scrom">BÀI GIẢNG SCROM</Link>
             </div>
             <div className="item-header">
@@ -452,10 +450,10 @@ const Header = () => {
                   <Link to="/">TIN TỨC 4</Link>
                 </li>
               </ul>
-            </div>
-            <div className="item-header">
+            </div> */}
+            {/* <div className="item-header">
               <Link to="/">HỖ TRỢ</Link>
-            </div>
+            </div> */}
             <div className="item-header">
               {!user ? (
                 <div className="action-header">

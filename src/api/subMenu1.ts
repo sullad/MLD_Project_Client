@@ -179,3 +179,27 @@ export const apiDeleteDocument1ForeignTableByDocument1ID = async (docId: any) =>
     else
         return null;
 }
+
+export const apiGetSubjectBySpeId = async (speId: any) => {
+    const result = await axios.get(`${base_url}Subject/GetSubjectByDepartmentId?id=${speId}`);
+    if (result)
+        return result;
+    else
+        return null;
+}
+
+export const apiGetcurriculumbySubjectId = async (subId: any) => {
+    const result = await axios.get(`${base_url}CurriculumDistribution/GetCurriculumBySubjectId/${subId}`);
+    if (result)
+        return result;
+    else
+        return null;
+}
+
+export const apiGetSelectedtopicBySubjectId = async (subId: any) => {
+    const result = await axios.get(`${base_url}SelectedTopic/GetSelectedTopicBySubjectId/${subId}`);
+    if (result)
+        return result;
+    else
+        return null;
+}

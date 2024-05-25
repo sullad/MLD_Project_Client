@@ -5,7 +5,7 @@ import Layout from '../../components/Layout'
 const SubMenu4DetailPage = () => {
     return (
         <Layout>
-            <SubMenu4Detail />
+            <SubMenu4Detail/>
         </Layout>
     )
 }
